@@ -1,12 +1,10 @@
 import * as ActionTypes from '../constants/actionTypes';
 
 import MockDate from 'mockdate';
-import { createStore } from 'redux';
+import configureStore from './configureStore';
 
-import calculator from '../utils/fuelSavingsCalculator';
-import {getFormattedDateTime} from '../utils/dateHelper';
-import initialState from '../reducers/initialState';
-import rootReducer from '../reducers';
+import {calculateSavings} from '../utils/fuelSavings';
+import {getFormattedDateTime} from '../utils/dates';
 
 describe('Store', () => {
   let dateModified;
@@ -18,7 +16,7 @@ describe('Store', () => {
   afterAll(() => MockDate.reset());
 
   it('should display results when necessary data is provided', () => {
-    const store = createStore(rootReducer, initialState);
+    const store = configureStore();
 
     const actions = [
       { type: ActionTypes.CALCULATE_FUEL_SAVINGS, dateModified, settings: store.getState(), fieldName: 'newMpg', value: 20 },
@@ -41,14 +39,14 @@ describe('Store', () => {
       displayResults: false,
       dateModified,
       necessaryDataIsProvidedToCalculateSavings: true,
-      savings: calculator().calculateSavings(store.getState().fuelSavings)
+      savings: calculateSavings(store.getState().fuelSavings)
     };
 
     expect(actual.fuelSavings).toEqual(expected);
   });
 
   it('should not display results when necessary data is not provided', () => {
-    const store = createStore(rootReducer, initialState);
+    const store = configureStore();
 
     const actions = [
       { type: ActionTypes.CALCULATE_FUEL_SAVINGS, dateModified, settings: store.getState(), fieldName: 'newMpg', value: 20 },
@@ -76,13 +74,12 @@ describe('Store', () => {
       savings: { annual: 0, monthly: 0, threeYear: 0 }
     };
 
-
     expect(actual.fuelSavings).toEqual(expected);
   });
 
 
   it('should handle a flurry of actions', () => {
-    const store = createStore(rootReducer, initialState);
+    const store = configureStore();
 
     const actions = [
       { type: ActionTypes.CALCULATE_FUEL_SAVINGS, dateModified, settings: store.getState(), fieldName: 'newMpg', value: 20 },
@@ -104,7 +101,7 @@ describe('Store', () => {
     ];
     actions.forEach(action => store.dispatch(action));
 
-    calculator().calculateSavings(store.getState().fuelSavings);
+    calculateSavings(store.getState().fuelSavings);
 
     const moreActions = [
       { type: ActionTypes.CALCULATE_FUEL_SAVINGS, dateModified, settings: store.getState(), fieldName: 'tradePpg', value: 0 },

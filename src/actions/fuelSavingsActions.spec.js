@@ -3,7 +3,7 @@ import * as ActionCreators from './fuelSavingsActions';
 
 import MockDate from 'mockdate';
 
-import {getFormattedDateTime} from '../utils/dateHelper';
+import {getFormattedDateTime} from '../utils/dates';
 
 describe('Actions', () => {
   let dateModified;
@@ -58,7 +58,6 @@ describe('Actions', () => {
       value
     };
 
-    expect(actual).toEqual(expected); // Notice use of deep because it's a nested object
-    // expect(actual).to.equal(expected); // Fails. Not deeply equal
+    expect(actual).toEqual(expected);
   });
 });

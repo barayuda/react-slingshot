@@ -1,5 +1,5 @@
 import React from 'react';
-import {shallow} from 'enzyme';
+import { shallow } from 'enzyme';
 import FuelSavingsTextInput from './FuelSavingsTextInput';
 
 describe('<FuelSavingsTextInput />', () => {
@@ -12,14 +12,28 @@ describe('<FuelSavingsTextInput />', () => {
     };
 
     const wrapper = shallow(<FuelSavingsTextInput {...props} />);
-
-    const actual = wrapper.type();
-    const expected = 'input';
-
-    expect(actual).toEqual(expected);
+    const inputType = wrapper.type();
+    expect(inputType).toEqual('input');
   });
 
   it('should handle change', () => {
+    const props = {
+      name: 'newMpg',
+      onChange: jest.fn(),
+      placeholder: null,
+      value: 100
+    };
+
+    const wrapper = shallow(<FuelSavingsTextInput {...props} />);
+    const changeEvent = {target: {value: 101}};
+
+    expect(props.onChange).not.toBeCalled();
+    wrapper.simulate('change', changeEvent);
+    expect(props.onChange).toBeCalledWith(changeEvent);
+  });
+
+  // Example of testing the value of a prop
+  it('should apply placeholder', () => {
     const props = {
       name: 'newMpg',
       onChange: jest.fn(),
@@ -28,13 +42,7 @@ describe('<FuelSavingsTextInput />', () => {
     };
 
     const wrapper = shallow(<FuelSavingsTextInput {...props} />);
-
-    const actual = wrapper.type();
-    const expected = 'input';
-
-    expect(actual).toEqual(expected);
-    expect(props.onChange).not.toBeCalled();
-    wrapper.simulate('change', {target: {value: 101}});
-    expect(props.onChange).toBeCalledWith('newMpg', 101);
+    const placeholder = wrapper.find('input').prop('placeholder');
+    expect(placeholder).toEqual('Type Here');
   });
 });
